@@ -1,0 +1,82 @@
+<!-- THIS HAS BEEN INCLUDED IN INDEX.HTML, THIS IS FOR DEMO -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inkfluence AI</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #f7f9fc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #typewriter-container {
+      text-align: center;
+    }
+
+    #typewriter {
+      font-size: 4rem;
+      font-weight: bold;
+      color: #1565c0;
+      white-space: nowrap;
+      border-right: 3px solid #1565c0;
+      width: 0;
+      overflow: hidden;
+      animation: typing 1.5s steps(10, end) forwards, fadeOut 0.5s ease 2s forwards;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 6ch; }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; }
+    }
+
+    .second-line {
+      font-size: 3rem;
+      font-weight: bold;
+      top: 50%;
+      right: 50%;
+      bottom: 50%;
+      left: 50%;
+      color: #1976d2;
+      opacity: 0;
+      white-space: nowrap;
+      border-right: 3px solid #1976d2;
+      overflow: hidden;
+      width: 0;
+      animation:
+        reveal 1.5s steps(17, end) forwards 2.5s,
+        fadeOut 0.5s ease 4.5s forwards;
+    }
+
+    @keyframes reveal {
+      from { width: 0; opacity: 1; }
+      to { width: 17ch; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="typewriter-container">
+    <div id="typewriter">Hello</div>
+    <div class="second-line">I am Inkfluence AI</div>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = '/chat/';
+    }, 5200);
+  </script>
+
+</body>
+</html>

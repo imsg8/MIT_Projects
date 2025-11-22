@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot GUI - Blue Theme with Icons</title>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMogygHUBqFEcJtlP7jXJY2VlfxGp7i6bGOGFxJ" crossorigin="anonymous">
+
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #e6f0fa; }
+        
+        .chat-container {
+            width: 100%; max-width: 420px; border-radius: 10px; background: #fff; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #007bff, #0056b3); color: #fff; padding: 15px; text-align: center; font-weight: bold;
+        }
+        
+        .messages {
+            padding: 15px; height: 350px; overflow-y: auto; display: flex; flex-direction: column;
+            background-color: #f0f7ff;
+        }
+        
+        .messages div {
+            margin: 5px 0; padding: 10px; border-radius: 8px; display: flex; align-items: center; animation: fadeIn 0.3s ease;
+        }
+
+        .user-msg { background-color: #cfe2ff; align-self: flex-end; flex-direction: row-reverse; }
+        .bot-msg { background-color: #fff; align-self: flex-start; color: #007bff; border: 1px solid #d1e9ff; }
+        
+        .user-avatar, .bot-avatar {
+            width: 30px; height: 30px; border-radius: 50%; margin: 0 10px; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 16px;
+        }
+        
+        .user-avatar { background-color: #007bff; }
+        .bot-avatar { background-color: #d1e9ff; color: #007bff; }
+        
+        .input-box {
+            display: flex; border-top: 1px solid #d1e9ff;
+            background-color: #fff;
+        }
+
+        .input-box input {
+            flex: 1; padding: 15px; border: none; font-size: 16px; border-radius: 0 0 0 10px;
+            background-color: #e6f0fa;
+        }
+
+        .input-box button {
+            padding: 15px 20px; background: #007bff; color: #fff; border: none; cursor: pointer;
+            font-size: 16px; transition: background 0.2s ease; border-radius: 0 0 10px 0;
+        }
+
+        .input-box button:hover { background: #0056b3; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">Chat with Us</div>
+        
+        <div id="messages" class="messages"></div>
+        
+        <div class="input-box">
+            <input type="text" id="userInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value;
+            if (!message) return;
+    
+            displayMessage('user', message);
+            input.value = '';
+    
+            try {
+                // Send message to backend PHP script
+                const response = await fetch('send_to_groq.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+    
+                const data = await response.json();
+    
+                if (data.reply) {
+                    displayMessage('bot', data.reply);
+                } else {
+                    console.error('No reply from server:', data);
+                    displayMessage('bot', 'Sorry, I could not understand that.');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                displayMessage('bot', 'There was an error processing your message. Please try again.');
+            }
+        }
+    
+        function displayMessage(sender, message) {
+            const messages = document.getElementById('messages');
+            const msgDiv = document.createElement('div');
+            const avatar = document.createElement('div');
+            const icon = document.createElement('i');
+    
+            if (sender === 'user') {
+                avatar.classList.add('user-avatar');
+                icon.classList.add('fas', 'fa-user');
+                msgDiv.className = 'user-msg';
+            } else {
+                avatar.classList.add('bot-avatar');
+                icon.classList.add('fas', 'fa-robot');
+                msgDiv.className = 'bot-msg';
+            }
+    
+            avatar.appendChild(icon);
+            msgDiv.appendChild(avatar);
+            msgDiv.appendChild(document.createTextNode(message));
+    
+            messages.appendChild(msgDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+    </script>
+    
+</body>
+</html>
